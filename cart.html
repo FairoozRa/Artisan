@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#5c4033">
+  <meta name="description" content="Shopping Cart - Review and manage your items at Artisan Market.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <title>Cart | Artisan Market</title>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <div class="header-top">
+      <div class="container">
+        <p class="header-message">DISCOVER AUTHENTIC HANDCRAFTED PRODUCTS MADE WITH PASSION</p>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="logo-section">
+          <a href="index.html" class="brand" aria-label="Artisan Market home">Artisan</a>
+        </div>
+
+        <nav class="main-nav" id="mainNav" role="navigation" aria-label="Main navigation">
+          <ul class="nav-menu">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-icons">
+          <button class="icon-btn" id="searchToggle" aria-label="Search products">
+            <span>🔍</span>
+          </button>
+          <a href="account.html" class="icon-btn" aria-label="Account">
+            <span>👤</span>
+          </a>
+          <a href="shop.html" class="icon-btn" aria-label="Wishlist">
+            <span>♡</span>
+          </a>
+          <a href="cart.html" class="icon-btn cart-btn active" aria-label="Shopping cart">
+            <span>🛒</span>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="search-bar-wrapper" id="searchBarWrapper" role="search">
+        <div class="container">
+          <input type="search" id="searchInput" placeholder="Search for products..." aria-label="Search" required>
+          <button id="searchBtn" type="button" aria-label="Search">Search</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="cart-hero">
+      <div class="container">
+        <h1>Shopping Cart</h1>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+      <div class="cart-wrapper">
+        <!-- Cart Items -->
+        <div class="cart-items-section">
+          <h2>Your Items</h2>
+          <div id="cartItems" class="cart-items"></div>
+        </div>
+
+        <!-- Order Summary -->
+        <aside class="cart-summary">
+          <h2>Order Summary</h2>
+
+          <div class="summary-item">
+            <span>Subtotal:</span>
+            <span id="subtotal">Rs. 0</span>
+          </div>
+
+          <div class="summary-item">
+            <span>Tax (10%):</span>
+            <span id="tax">Rs. 0</span>
+          </div>
+
+          <div class="summary-item">
+            <span>Shipping:</span>
+            <span id="shipping">Rs. 250</span>
+          </div>
+
+          <div class="summary-total">
+            <span>Total:</span>
+            <span id="total">Rs. 0</span>
+          </div>
+
+          <!-- Promo Code -->
+          <div class="promo-section">
+            <input type="text" id="promoCode" placeholder="Enter promo code" aria-label="Promo code">
+            <button id="applyPromo" class="btn btn-outline">Apply</button>
+          </div>
+
+          <!-- Checkout Button -->
+          <button class="btn btn-primary btn-large">Proceed to Checkout</button>
+
+          <!-- Free Shipping Notice -->
+          <div class="shipping-notice">
+            <p>✓ Free shipping on orders over Rs. 5,000</p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Related Products -->
+      <section class="related-products">
+        <h2>You Might Also Like</h2>
+        <div id="relatedGrid" class="product-grid"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h4>Get in Touch</h4>
+            <p>📧 <a href="mailto:info@artisanmarket.com">info@artisanmarket.com</a></p>
+            <p>📞 <a href="tel:+94123456789">+94 123 456 789</a></p>
+            <p>📍 Colombo, Sri Lanka</p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Information</h4>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="#">Wishlist</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="#">New Arrivals</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Account</h4>
+            <ul>
+              <li><a href="account.html">Login</a></li>
+              <li><a href="account.html">Register</a></li>
+              <li><a href="account.html">My Orders</a></li>
+              <li><a href="#">Settings</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Newsletter</h4>
+            <p>Subscribe to get special offers and updates</p>
+            <form class="newsletter-form" method="post">
+              <input type="email" placeholder="Your email" required aria-label="Email address">
+              <button type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Artisan Market Sri Lanka. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="cart-script.js"></script>
+</body>
+</html>

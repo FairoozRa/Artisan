@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#5c4033">
+  <meta name="description" content="Product Details - View detailed information about this handcrafted product at Artisan Market.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <title>Product Details | Artisan Market</title>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <div class="header-top">
+      <div class="container">
+        <p class="header-message">DISCOVER AUTHENTIC HANDCRAFTED PRODUCTS MADE WITH PASSION</p>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="logo-section">
+          <a href="index.html" class="brand" aria-label="Artisan Market home">Artisan</a>
+        </div>
+
+        <nav class="main-nav" id="mainNav" role="navigation" aria-label="Main navigation">
+          <ul class="nav-menu">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-icons">
+          <button class="icon-btn" id="searchToggle" aria-label="Search products">
+            <span>🔍</span>
+          </button>
+          <a href="account.html" class="icon-btn" aria-label="Account">
+            <span>👤</span>
+          </a>
+          <a href="shop.html" class="icon-btn" aria-label="Wishlist">
+            <span>♡</span>
+          </a>
+          <a href="cart.html" class="icon-btn cart-btn" aria-label="Shopping cart">
+            <span>🛒</span>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="search-bar-wrapper" id="searchBarWrapper" role="search">
+        <div class="container">
+          <input type="search" id="searchInput" placeholder="Search for products..." aria-label="Search" required>
+          <button id="searchBtn" type="button" aria-label="Search">Search</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-container">
+      <div class="container">
+        <nav aria-label="Breadcrumb">
+          <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="productBreadcrumb">Product</span>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <main class="container product-detail">
+      <div class="product-detail-grid">
+        <!-- Product Gallery -->
+        <div class="product-gallery">
+          <div class="main-image">
+            <img id="mainImage" src="https://via.placeholder.com/500x500?text=Product" alt="Product image" loading="lazy">
+          </div>
+          <div class="thumbnail-gallery">
+            <img class="thumbnail" src="https://via.placeholder.com/100x100?text=Img1" alt="Thumbnail 1" loading="lazy">
+            <img class="thumbnail" src="https://via.placeholder.com/100x100?text=Img2" alt="Thumbnail 2" loading="lazy">
+            <img class="thumbnail" src="https://via.placeholder.com/100x100?text=Img3" alt="Thumbnail 3" loading="lazy">
+            <img class="thumbnail" src="https://via.placeholder.com/100x100?text=Img4" alt="Thumbnail 4" loading="lazy">
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+          <h1 id="productName">Product Name</h1>
+          
+          <div class="product-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="review-count">(42 reviews)</span>
+          </div>
+
+          <p id="productDescription">Product description goes here</p>
+
+          <div class="product-price">
+            <p class="price" id="productPrice">Rs. 1,800</p>
+          </div>
+
+          <div class="product-specs">
+            <h3>Specifications</h3>
+            <div class="specs-list">
+              <p><strong>Material:</strong> <span id="material">Natural Cotton</span></p>
+              <p><strong>Dimensions:</strong> <span id="dimensions">40cm x 30cm</span></p>
+              <p><strong>Weight:</strong> <span id="weight">650g</span></p>
+              <p><strong>Artisan:</strong> <span id="artisan">Skilled Craftsperson</span></p>
+              <p><strong>Stock:</strong> <span id="stockStatus">In Stock</span></p>
+            </div>
+          </div>
+
+          <!-- Add to Cart Section -->
+          <div class="add-to-cart-section">
+            <div class="quantity-selector">
+              <button id="decreaseQty" aria-label="Decrease quantity">-</button>
+              <input type="number" id="quantity" value="1" min="1" max="10" aria-label="Quantity">
+              <button id="increaseQty" aria-label="Increase quantity">+</button>
+            </div>
+            <button id="addToCartBtn" class="btn btn-primary btn-large">Add to Cart</button>
+          </div>
+
+          <!-- Product Info Box -->
+          <div class="product-info-box">
+            <div class="info-item">
+              <span>🚚</span>
+              <div>
+                <strong>Free Shipping</strong>
+                <p>On orders over Rs. 5,000</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span>↩️</span>
+              <div>
+                <strong>Easy Returns</strong>
+                <p>30-day return policy</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span>✓</span>
+              <div>
+                <strong>Authenticity</strong>
+                <p>100% genuine handcrafted</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <section class="reviews-section">
+        <h2>Customer Reviews</h2>
+        <div class="reviews-list">
+          <div class="review-item">
+            <strong>Amazing Quality!</strong>
+            <p>⭐⭐⭐⭐⭐</p>
+            <p>"This product exceeded my expectations. Highly recommended!"</p>
+            <p class="review-author">- Customer</p>
+          </div>
+          <div class="review-item">
+            <strong>Worth Every Penny</strong>
+            <p>⭐⭐⭐⭐⭐</p>
+            <p>"Great craftsmanship and fast delivery. Will buy again!"</p>
+            <p class="review-author">- Customer</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Products -->
+      <section class="related-products">
+        <h2>Related Products</h2>
+        <div id="relatedGrid" class="product-grid"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h4>Get in Touch</h4>
+            <p>📧 <a href="mailto:info@artisanmarket.com">info@artisanmarket.com</a></p>
+            <p>📞 <a href="tel:+94123456789">+94 123 456 789</a></p>
+            <p>📍 Colombo, Sri Lanka</p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Information</h4>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="#">Wishlist</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="#">New Arrivals</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Account</h4>
+            <ul>
+              <li><a href="account.html">Login</a></li>
+              <li><a href="account.html">Register</a></li>
+              <li><a href="account.html">My Orders</a></li>
+              <li><a href="#">Settings</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Newsletter</h4>
+            <p>Subscribe to get special offers and updates</p>
+            <form class="newsletter-form" method="post">
+              <input type="email" placeholder="Your email" required aria-label="Email address">
+              <button type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Artisan Market Sri Lanka. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="product-detail-script.js"></script>
+</body>
+</html>

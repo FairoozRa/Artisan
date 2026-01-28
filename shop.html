@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#5c4033">
+  <meta name="description" content="Shop - Browse our collection of handcrafted products at Artisan Market.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <title>Shop | Artisan Market</title>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <div class="header-top">
+      <div class="container">
+        <p class="header-message">DISCOVER AUTHENTIC HANDCRAFTED PRODUCTS MADE WITH PASSION</p>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="logo-section">
+          <a href="index.html" class="brand" aria-label="Artisan Market home">Artisan</a>
+        </div>
+
+        <nav class="main-nav" id="mainNav" role="navigation" aria-label="Main navigation">
+          <ul class="nav-menu">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-icons">
+          <button class="icon-btn" id="searchToggle" aria-label="Search products">
+            <span>🔍</span>
+          </button>
+          <a href="account.html" class="icon-btn" aria-label="Account">
+            <span>👤</span>
+          </a>
+          <a href="shop.html" class="icon-btn" aria-label="Wishlist">
+            <span>♡</span>
+          </a>
+          <a href="cart.html" class="icon-btn cart-btn" aria-label="Shopping cart">
+            <span>🛒</span>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="search-bar-wrapper" id="searchBarWrapper" role="search">
+        <div class="container">
+          <input type="search" id="searchInput" placeholder="Search for products..." aria-label="Search" required>
+          <button id="searchBtn" type="button" aria-label="Search">Search</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container shop-container">
+      <div class="shop-wrapper">
+        <!-- Sidebar Filters -->
+        <aside class="shop-sidebar">
+          <div class="filter-section">
+            <h3>Filters</h3>
+            <button id="clearFilters" class="btn btn-outline btn-sm">Clear Filters</button>
+          </div>
+
+          <div class="filter-section">
+            <h4>Category</h4>
+            <div class="filter-options">
+              <label>
+                <input type="checkbox" data-filter="category" value="bags">
+                Bags
+              </label>
+              <label>
+                <input type="checkbox" data-filter="category" value="decor">
+                Home Decor
+              </label>
+              <label>
+                <input type="checkbox" data-filter="category" value="wood">
+                Wood Art
+              </label>
+              <label>
+                <input type="checkbox" data-filter="category" value="jewelry">
+                Jewelry
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4>Price Range</h4>
+            <div class="filter-options">
+              <label>
+                <input type="radio" data-filter="price" name="price" value="0-1000">
+                Under Rs. 1,000
+              </label>
+              <label>
+                <input type="radio" data-filter="price" name="price" value="1000-2000">
+                Rs. 1,000 - Rs. 2,000
+              </label>
+              <label>
+                <input type="radio" data-filter="price" name="price" value="2000-3500">
+                Rs. 2,000 - Rs. 3,500
+              </label>
+              <label>
+                <input type="radio" data-filter="price" name="price" value="3500+">
+                Above Rs. 3,500
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Products Section -->
+        <main class="shop-main">
+          <div class="shop-header">
+            <h1>Our Collection</h1>
+            <div class="shop-controls">
+              <label for="sortBy">Sort by:</label>
+              <select id="sortBy" aria-label="Sort products">
+                <option value="newest">Newest</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="popular">Most Popular</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="product-count">Showing <span id="productCount">0</span> products</p>
+
+          <div id="shopGrid" class="product-grid"></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h4>Get in Touch</h4>
+            <p>📧 <a href="mailto:info@artisanmarket.com">info@artisanmarket.com</a></p>
+            <p>📞 <a href="tel:+94123456789">+94 123 456 789</a></p>
+            <p>📍 Colombo, Sri Lanka</p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Information</h4>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="#">Wishlist</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="#">New Arrivals</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Account</h4>
+            <ul>
+              <li><a href="account.html">Login</a></li>
+              <li><a href="account.html">Register</a></li>
+              <li><a href="account.html">My Orders</a></li>
+              <li><a href="#">Settings</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Newsletter</h4>
+            <p>Subscribe to get special offers and updates</p>
+            <form class="newsletter-form" method="post">
+              <input type="email" placeholder="Your email" required aria-label="Email address">
+              <button type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Artisan Market Sri Lanka. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="shop-script.js"></script>
+</body>
+</html>

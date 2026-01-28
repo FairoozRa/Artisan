@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#5c4033">
+  <meta name="description" content="Account - Login, register, and manage your profile at Artisan Market.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <title>Account | Artisan Market</title>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <div class="header-top">
+      <div class="container">
+        <p class="header-message">DISCOVER AUTHENTIC HANDCRAFTED PRODUCTS MADE WITH PASSION</p>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="logo-section">
+          <a href="index.html" class="brand" aria-label="Artisan Market home">Artisan</a>
+        </div>
+
+        <nav class="main-nav" id="mainNav" role="navigation" aria-label="Main navigation">
+          <ul class="nav-menu">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-icons">
+          <button class="icon-btn" id="searchToggle" aria-label="Search products">
+            <span>🔍</span>
+          </button>
+          <a href="account.html" class="icon-btn active" aria-label="Account">
+            <span>👤</span>
+          </a>
+          <a href="shop.html" class="icon-btn" aria-label="Wishlist">
+            <span>♡</span>
+          </a>
+          <a href="cart.html" class="icon-btn cart-btn" aria-label="Shopping cart">
+            <span>🛒</span>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="search-bar-wrapper" id="searchBarWrapper" role="search">
+        <div class="container">
+          <input type="search" id="searchInput" placeholder="Search for products..." aria-label="Search" required>
+          <button id="searchBtn" type="button" aria-label="Search">Search</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container account-container">
+      <!-- Authentication Container -->
+      <div id="authContainer" class="auth-container">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Login</button>
+          <button class="auth-tab" data-tab="register">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login" class="auth-form active">
+          <h2>Login to Your Account</h2>
+          <form method="post">
+            <div class="form-group">
+              <label for="loginEmail">Email Address *</label>
+              <input type="email" id="loginEmail" name="email" required aria-required="true">
+            </div>
+
+            <div class="form-group">
+              <label for="loginPassword">Password *</label>
+              <input type="password" id="loginPassword" name="password" required aria-required="true">
+            </div>
+
+            <div class="form-remember">
+              <label>
+                <input type="checkbox" name="remember">
+                Remember me
+              </label>
+              <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-large">Login</button>
+          </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register" class="auth-form">
+          <h2>Create New Account</h2>
+          <form method="post">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required aria-required="true">
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName">
+            </div>
+
+            <div class="form-group">
+              <label for="registerEmail">Email Address *</label>
+              <input type="email" id="registerEmail" name="email" required aria-required="true">
+            </div>
+
+            <div class="form-group">
+              <label for="registerPassword">Password *</label>
+              <input type="password" id="registerPassword" name="password" required aria-required="true">
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password *</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" required aria-required="true">
+            </div>
+
+            <div class="form-checkbox">
+              <label>
+                <input type="checkbox" required>
+                I agree to the Terms and Conditions
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-large">Create Account</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Dashboard Container (Hidden by default) -->
+      <div id="accountDashboard" class="account-dashboard" style="display: none;">
+        <!-- User Profile Header -->
+        <div class="dashboard-header">
+          <div class="user-info">
+            <h2 id="userName">Welcome back, User!</h2>
+            <p id="userEmail">user@email.com</p>
+          </div>
+          <button id="logoutBtn" class="btn btn-outline">Logout</button>
+        </div>
+
+        <!-- Dashboard Navigation -->
+        <div class="dashboard-sidebar">
+          <nav class="dashboard-nav">
+            <button class="nav-btn active" data-section="overview">Overview</button>
+            <button class="nav-btn" data-section="orders">My Orders</button>
+            <button class="nav-btn" data-section="addresses">Addresses</button>
+            <button class="nav-btn" data-section="wishlist">Wishlist</button>
+            <button class="nav-btn" data-section="settings">Settings</button>
+            <button class="nav-btn logout">Logout</button>
+          </nav>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+          <!-- Overview Section -->
+          <section id="overview" class="dashboard-section active">
+            <h2>My Account</h2>
+            <div class="overview-grid">
+              <div class="overview-card">
+                <h3>📦 Orders</h3>
+                <p class="overview-number">5</p>
+                <a href="#" class="overview-link">View Orders</a>
+              </div>
+              <div class="overview-card">
+                <h3>❤️ Wishlist</h3>
+                <p class="overview-number">12</p>
+                <a href="#" class="overview-link">View Wishlist</a>
+              </div>
+              <div class="overview-card">
+                <h3>📍 Addresses</h3>
+                <p class="overview-number">2</p>
+                <a href="#" class="overview-link">Manage Addresses</a>
+              </div>
+              <div class="overview-card">
+                <h3>⚙️ Settings</h3>
+                <p class="overview-number">4</p>
+                <a href="#" class="overview-link">Update Settings</a>
+              </div>
+            </div>
+          </section>
+
+          <!-- Orders Section -->
+          <section id="orders" class="dashboard-section">
+            <h2>My Orders</h2>
+            <div class="orders-list">
+              <div class="order-item">
+                <p><strong>Order #12345</strong> - January 15, 2026</p>
+                <p>Status: Delivered</p>
+                <p>Total: Rs. 4,500</p>
+              </div>
+              <div class="order-item">
+                <p><strong>Order #12346</strong> - January 20, 2026</p>
+                <p>Status: Processing</p>
+                <p>Total: Rs. 3,200</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Addresses Section -->
+          <section id="addresses" class="dashboard-section">
+            <h2>Saved Addresses</h2>
+            <div class="addresses-list">
+              <div class="address-item">
+                <h3>Home</h3>
+                <p>123 Main Street, Colombo 5</p>
+                <p>Sri Lanka</p>
+              </div>
+              <div class="address-item">
+                <h3>Office</h3>
+                <p>456 Business Ave, Colombo 3</p>
+                <p>Sri Lanka</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Wishlist Section -->
+          <section id="wishlist" class="dashboard-section">
+            <h2>My Wishlist</h2>
+            <p>Items you've saved for later</p>
+          </section>
+
+          <!-- Settings Section -->
+          <section id="settings" class="dashboard-section">
+            <h2>Account Settings</h2>
+            <div class="settings-form">
+              <div class="form-group">
+                <label for="settingEmail">Email</label>
+                <input type="email" id="settingEmail" disabled>
+              </div>
+              <div class="form-group">
+                <label for="settingPhone">Phone</label>
+                <input type="tel" id="settingPhone" value="+94123456789">
+              </div>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h4>Get in Touch</h4>
+            <p>📧 <a href="mailto:info@artisanmarket.com">info@artisanmarket.com</a></p>
+            <p>📞 <a href="tel:+94123456789">+94 123 456 789</a></p>
+            <p>📍 Colombo, Sri Lanka</p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Information</h4>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="#">Wishlist</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="#">New Arrivals</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Account</h4>
+            <ul>
+              <li><a href="account.html">Login</a></li>
+              <li><a href="account.html">Register</a></li>
+              <li><a href="account.html">My Orders</a></li>
+              <li><a href="#">Settings</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Newsletter</h4>
+            <p>Subscribe to get special offers and updates</p>
+            <form class="newsletter-form" method="post">
+              <input type="email" placeholder="Your email" required aria-label="Email address">
+              <button type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Artisan Market Sri Lanka. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="account-script.js"></script>
+</body>
+</html>
