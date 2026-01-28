@@ -1,6 +1,6 @@
 /**
  * common.js - Shared functionality across all pages
- * Handles: Mobile menu, search bar, year display
+ * Handles: Mobile menu, search bar, year display, cart count
  */
 
 (function () {
@@ -13,6 +13,19 @@
   const searchToggle = document.getElementById('searchToggle');
   const searchBarWrapper = document.getElementById('searchBarWrapper');
   const searchInput = document.getElementById('searchInput');
+
+  /**
+   * Update cart count in header
+   */
+  function updateCartCount() {
+    const cartCountElements = document.querySelectorAll('.cart-count');
+    const storedCart = localStorage.getItem('cart');
+    const cart = storedCart ? JSON.parse(storedCart) : [];
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountElements.forEach(el => {
+      el.textContent = cartCount;
+    });
+  }
 
   /**
    * Toggle mobile menu visibility
@@ -67,6 +80,7 @@
 
     closeMenuOnLinkClick();
     setCurrentYear();
+    updateCartCount();
   }
 
   // Run on DOM ready

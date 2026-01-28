@@ -1,18 +1,13 @@
 /**
  * cart-script.js - Shopping cart functionality
- * Handles: Cart management, calculations, promo codes
+ * Handles: Cart management, calculations, promo codes, persistent storage
  */
-
-
 
 (function () {
   'use strict';
 
-  // Sample Cart Data
-  let cart = [
-    { id: 1, name: 'Batik Tote Bag', price: 1800, quantity: 1, image: 'https://via.placeholder.com/100x100?text=Batik' },
-    { id: 2, name: 'Handwoven Mat', price: 3200, quantity: 1, image: 'https://via.placeholder.com/100x100?text=Mat' }
-  ];
+  // Cart data
+  let cart = [];
 
   // Constants
   const TAX_RATE = 0.10;
@@ -25,6 +20,39 @@
   const totalEl = document.getElementById('total');
   const applyPromoBtn = document.getElementById('applyPromo');
   const promoInput = document.getElementById('promoCode');
+
+  /**
+   * Load cart from localStorage
+   */
+  function loadCart() {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      try {
+        cart = JSON.parse(storedCart);
+      } catch (e) {
+        cart = [];
+      }
+    }
+  }
+
+  /**
+   * Save cart to localStorage
+   */
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+  }
+
+  /**
+   * Update cart count in header
+   */
+  function updateCartCount() {
+    const cartCountElements = document.querySelectorAll('.cart-count');
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountElements.forEach(el => {
+      el.textContent = cartCount;
+    });
+  }
 
   /**
    * Render cart items to DOM
@@ -75,8 +103,12 @@
     document.querySelectorAll('input[type="number"]').forEach(input => {
       input.addEventListener('change', (e) => {
         const index = parseInt(e.target.dataset.index);
-        cart[index].quantity = parseInt(e.target.value) || 1;
-        renderCart();
+        const newQuantity = parseInt(e.target.value) || 1;
+        if (newQuantity > 0) {
+          cart[index].quantity = newQuantity;
+          saveCart();
+          renderCart();
+        }
       });
     });
 
@@ -85,6 +117,7 @@
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.remove);
         cart.splice(index, 1);
+        saveCart();
         renderCart();
       });
     });
@@ -96,7 +129,8 @@
   function updateCartSummary() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const tax = subtotal * TAX_RATE;
-    const total = subtotal + tax + (cart.length > 0 ? SHIPPING : 0);
+    const shippingCost = cart.length > 0 ? SHIPPING : 0;
+    const total = subtotal + tax + shippingCost;
 
     if (subtotalEl) subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
     if (taxEl) taxEl.textContent = `Rs. ${tax.toLocaleString()}`;
@@ -124,7 +158,9 @@
    * Initialize
    */
   function init() {
+    loadCart();
     renderCart();
+    updateCartCount();
 
     if (applyPromoBtn) applyPromoBtn.addEventListener('click', handlePromoCode);
   }

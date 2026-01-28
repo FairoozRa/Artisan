@@ -292,8 +292,17 @@
     if (!sellerProducts) sellerProducts = [];
     sellerProducts.push(productData);
 
-    // Save to local storage
+    // Save to seller's local storage
     localStorage.setItem('sellerProducts_' + currentUser.email, JSON.stringify(sellerProducts));
+    
+    // Also add to global products database
+    let allProducts = [];
+    const stored = localStorage.getItem('allProducts');
+    if (stored) {
+      allProducts = JSON.parse(stored);
+    }
+    allProducts.push(productData);
+    localStorage.setItem('allProducts', JSON.stringify(allProducts));
 
     alert('Product added successfully!');
     
