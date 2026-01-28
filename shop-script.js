@@ -26,6 +26,7 @@
   let allProducts = [];
   let filteredProducts = [];
   let currentSort = 'newest';
+  let db = null;
 
   // DOM Elements
   const shopGrid = document.getElementById('shopGrid');
@@ -38,24 +39,51 @@
    * Load all products from seller database
    */
   function loadAllProducts() {
-    // Get seller products from localStorage
-    const storedProducts = localStorage.getItem('allProducts');
-    
-    if (storedProducts) {
-      try {
-        const sellerProducts = JSON.parse(storedProducts);
-        if (sellerProducts.length > 0) {
-          allProducts = sellerProducts;
-          return;
+    // Try to load from Firestore first (if Firebase is configured)
+    if (typeof window.firebaseConfig !== 'undefined' && window.firebaseConfig.db) {
+      db = window.firebaseConfig.db;
+      
+      db.collection('allProducts').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+        allProducts = [];
+        snapshot.forEach((doc) => {
+          allProducts.push(doc.data());
+        });
+        
+        if (allProducts.length > 0) {
+          filteredProducts = [...allProducts];
+          applySorting();
+          renderProducts();
+        } else {
+          // Fallback to sample products if no seller products in Firestore
+          allProducts = [...sampleProducts];
+          filteredProducts = [...allProducts];
+          applySorting();
+          renderProducts();
         }
-      } catch (e) {
-        console.log('Using sample products');
+      });
+    } else {
+      // Fallback to localStorage or sample products
+      const storedProducts = localStorage.getItem('allProducts');
+      
+      if (storedProducts) {
+        try {
+          const sellerProducts = JSON.parse(storedProducts);
+          if (sellerProducts.length > 0) {
+            allProducts = sellerProducts;
+          } else {
+            allProducts = [...sampleProducts];
+          }
+        } catch (e) {
+          allProducts = [...sampleProducts];
+        }
+      } else {
+        allProducts = [...sampleProducts];
       }
+      
+      filteredProducts = [...allProducts];
+      applySorting();
+      renderProducts();
     }
-
-    // If no seller products, use sample products
-    // In a real app, these would come from a server
-    allProducts = [...sampleProducts];
   }
 
   /**

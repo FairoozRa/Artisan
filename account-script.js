@@ -1,33 +1,699 @@
 /**
  * account-script.js - Account and authentication functionality
- * Handles: Login/Register forms, dashboard navigation, buyer/seller accounts
+ * Handles: Firebase login/register, dashboard navigation, buyer/seller accounts
  */
 
 (function () {
   'use strict';
 
-  // DOM Elements
-  const authTabs = document.querySelectorAll('.auth-tab');
-  const authForms = document.querySelectorAll('.auth-form');
-  const accountDashboard = document.getElementById('accountDashboard');
-  const authContainer = document.getElementById('authContainer');
-  const dashboardNavBtns = document.querySelectorAll('.nav-btn');
-  const dashboardSections = document.querySelectorAll('.dashboard-section');
-  const logoutBtn = document.getElementById('logoutBtn');
-  
-  // Account type elements
-  const accountTypeRadios = document.querySelectorAll('input[name="accountType"]');
-  const sellerFields = document.getElementById('sellerFields');
-  const buyerNav = document.getElementById('buyerNav');
-  const sellerNav = document.getElementById('sellerNav');
-  const addProductForm = document.getElementById('addProductForm');
-  const productImage = document.getElementById('productImage');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewImg = document.getElementById('previewImg');
-  
-  // Local storage for user data
-  let currentUser = null;
-  let sellerProducts = [];
+  // Wait for Firebase to be initialized
+  function waitForFirebase(callback) {
+    if (typeof window.firebaseConfig !== 'undefined' && window.firebaseConfig.isConfigured) {
+      callback();
+    } else {
+      setTimeout(() => waitForFirebase(callback), 100);
+    }
+  }
+
+  // Start initialization once Firebase is ready
+  waitForFirebase(initializeApp);
+
+  function initializeApp() {
+    // DOM Elements
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const authForms = document.querySelectorAll('.auth-form');
+    const accountDashboard = document.getElementById('accountDashboard');
+    const authContainer = document.getElementById('authContainer');
+    const dashboardNavBtns = document.querySelectorAll('.nav-btn');
+    const dashboardSections = document.querySelectorAll('.dashboard-section');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    // Account type elements
+    const accountTypeRadios = document.querySelectorAll('input[name="accountType"]');
+    const sellerFields = document.getElementById('sellerFields');
+    const buyerNav = document.getElementById('buyerNav');
+    const sellerNav = document.getElementById('sellerNav');
+    const addProductForm = document.getElementById('addProductForm');
+    const productImage = document.getElementById('productImage');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    // Get Firebase instances
+    const auth = window.firebaseConfig.auth;
+    const db = window.firebaseConfig.db;
+    const storage = firebase.storage();
+    
+    // Local storage for user data
+    let currentUser = null;
+    let sellerProducts = [];
+
+    /**
+     * Handle auth tab switching (Login/Register)
+     */
+    function handleAuthTabSwitch(e) {
+      const tabName = e.target.dataset.tab;
+
+      authTabs.forEach(tab => tab.classList.remove('active'));
+      authForms.forEach(form => form.classList.remove('active'));
+
+      e.target.classList.add('active');
+
+      const targetForm = document.getElementById(tabName);
+      if (targetForm) {
+        targetForm.classList.add('active');
+      }
+
+      // Reset account type to buyer when switching tabs
+      if (tabName === 'register') {
+        const buyerRadio = document.querySelector('input[name="accountType"][value="buyer"]');
+        if (buyerRadio) buyerRadio.checked = true;
+        if (sellerFields) sellerFields.style.display = 'none';
+      }
+    }
+
+    /**
+     * Handle account type selection (Buyer/Seller)
+     */
+    function handleAccountTypeChange(e) {
+      const accountType = e.target.value;
+      
+      if (accountType === 'seller') {
+        if (sellerFields) sellerFields.style.display = 'block';
+        // Mark seller fields as required
+        const businessName = document.getElementById('businessName');
+        const businessPhone = document.getElementById('businessPhone');
+        if (businessName) businessName.required = true;
+        if (businessPhone) businessPhone.required = true;
+      } else {
+        if (sellerFields) sellerFields.style.display = 'none';
+        // Mark seller fields as not required
+        const businessName = document.getElementById('businessName');
+        const businessPhone = document.getElementById('businessPhone');
+        if (businessName) businessName.required = false;
+        if (businessPhone) businessPhone.required = false;
+      }
+    }
+
+    /**
+     * Handle dashboard navigation
+     */
+    function handleDashboardNav(e) {
+      if (e.target.classList.contains('logout')) {
+        handleLogout();
+        return;
+      }
+
+      const sectionName = e.target.dataset.section;
+
+      dashboardNavBtns.forEach(btn => btn.classList.remove('active'));
+      dashboardSections.forEach(section => section.classList.remove('active'));
+
+      e.target.classList.add('active');
+
+      const targetSection = document.getElementById(sectionName);
+      if (targetSection && sectionName) {
+        targetSection.classList.add('active');
+      }
+    }
+
+    /**
+     * Handle login form submission with Firebase
+     */
+    function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail')?.value;
+      const password = document.getElementById('loginPassword')?.value;
+
+      if (!email || !password) {
+        alert('Please enter both email and password');
+        return;
+      }
+
+      // Show loading state
+      const loginBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = loginBtn.textContent;
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+
+      // Firebase login
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          
+          // Get user profile from Firestore
+          return db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                const userData = doc.data();
+                currentUser = {
+                  uid: user.uid,
+                  email: user.email,
+                  ...userData
+                };
+
+                const userNameEl = document.getElementById('userName');
+                const userEmailEl = document.getElementById('userEmail');
+
+                if (userNameEl) userNameEl.textContent = `Welcome back, ${userData.firstName}!`;
+                if (userEmailEl) userEmailEl.textContent = email;
+
+                displayDashboard(userData.accountType);
+
+                if (authContainer) authContainer.style.display = 'none';
+                if (accountDashboard) accountDashboard.style.display = 'grid';
+
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+              } else {
+                throw new Error('User profile not found');
+              }
+            });
+        })
+        .catch((error) => {
+          console.error('Login error:', error);
+          alert('Login failed: ' + error.message);
+          loginBtn.textContent = originalText;
+          loginBtn.disabled = false;
+        });
+    }
+
+    /**
+     * Handle register form submission with Firebase
+     */
+    function handleRegister(e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName')?.value;
+      const email = document.getElementById('registerEmail')?.value;
+      const password = document.getElementById('registerPassword')?.value;
+      const confirmPassword = document.getElementById('confirmPassword')?.value;
+      const accountType = document.querySelector('input[name="accountType"]:checked')?.value;
+      const businessName = document.getElementById('businessName')?.value;
+      const businessPhone = document.getElementById('businessPhone')?.value;
+
+      // Validation
+      if (!firstName || !email || !password || !confirmPassword || !accountType) {
+        alert('Please fill all required fields');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long');
+        return;
+      }
+
+      if (accountType === 'seller' && (!businessName || !businessPhone)) {
+        alert('Please fill in all seller information');
+        return;
+      }
+
+      // Show loading state
+      const registerBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = registerBtn.textContent;
+      registerBtn.textContent = 'Creating account...';
+      registerBtn.disabled = true;
+
+      // Firebase registration
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+
+          // Create user profile in Firestore
+          const userData = {
+            uid: user.uid,
+            firstName,
+            lastName: document.getElementById('lastName')?.value,
+            email,
+            accountType,
+            createdAt: new Date().toISOString()
+          };
+
+          if (accountType === 'seller') {
+            userData.businessName = businessName;
+            userData.businessDescription = document.getElementById('businessDescription')?.value;
+            userData.businessPhone = businessPhone;
+          }
+
+          return db.collection('users').doc(user.uid).set(userData)
+            .then(() => {
+              currentUser = userData;
+
+              const userNameEl = document.getElementById('userName');
+              const userEmailEl = document.getElementById('userEmail');
+
+              if (userNameEl) userNameEl.textContent = `Welcome, ${firstName}!`;
+              if (userEmailEl) userEmailEl.textContent = email;
+
+              displayDashboard(accountType);
+
+              if (authContainer) authContainer.style.display = 'none';
+              if (accountDashboard) accountDashboard.style.display = 'grid';
+
+              alert(`Account created successfully! Welcome to Artisan Market!`);
+              registerBtn.textContent = originalText;
+              registerBtn.disabled = false;
+            });
+        })
+        .catch((error) => {
+          console.error('Registration error:', error);
+          alert('Registration failed: ' + error.message);
+          registerBtn.textContent = originalText;
+          registerBtn.disabled = false;
+        });
+    }
+
+    /**
+     * Display appropriate dashboard based on account type
+     */
+    function displayDashboard(accountType) {
+      if (accountType === 'seller') {
+        // Show seller dashboard
+        if (buyerNav) buyerNav.style.display = 'none';
+        if (sellerNav) sellerNav.style.display = 'block';
+        
+        // Hide buyer sections, show seller sections
+        const buyerSections = ['overview', 'orders', 'addresses', 'wishlist'];
+        const sellerSections = ['seller-overview', 'inventory', 'add-product', 'seller-orders', 'seller-analytics'];
+        
+        buyerSections.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) section.style.display = 'none';
+        });
+        
+        sellerSections.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) section.style.display = 'block';
+        });
+        
+        // Set first seller section as active
+        const firstSellerBtn = document.querySelector('[data-section="seller-overview"]');
+        if (firstSellerBtn) firstSellerBtn.click();
+        
+        // Load seller products
+        loadSellerProducts();
+      } else {
+        // Show buyer dashboard
+        if (buyerNav) buyerNav.style.display = 'block';
+        if (sellerNav) sellerNav.style.display = 'none';
+        
+        // Show buyer sections, hide seller sections
+        const buyerSections = ['overview', 'orders', 'addresses', 'wishlist'];
+        const sellerSections = ['seller-overview', 'inventory', 'add-product', 'seller-orders', 'seller-analytics'];
+        
+        buyerSections.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) section.style.display = 'block';
+        });
+        
+        sellerSections.forEach(id => {
+          const section = document.getElementById(id);
+          if (section) section.style.display = 'none';
+        });
+        
+        // Set first buyer section as active
+        const firstBuyerBtn = document.querySelector('[data-section="overview"]');
+        if (firstBuyerBtn) firstBuyerBtn.click();
+      }
+    }
+
+    /**
+     * Handle logout
+     */
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        auth.signOut()
+          .then(() => {
+            currentUser = null;
+            sellerProducts = [];
+            
+            if (accountDashboard) accountDashboard.style.display = 'none';
+            if (authContainer) authContainer.style.display = 'block';
+
+            const loginForm = document.getElementById('login');
+            const registerForm = document.getElementById('register');
+
+            if (loginForm) loginForm.classList.add('active');
+            if (registerForm) registerForm.classList.remove('active');
+
+            authTabs[0]?.classList.add('active');
+            authTabs[1]?.classList.remove('active');
+
+            alert('Logged out successfully');
+          })
+          .catch((error) => {
+            console.error('Logout error:', error);
+          });
+      }
+    }
+
+    /**
+     * Handle image preview for product
+     */
+    function handleImagePreview(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File size must be less than 5MB');
+          e.target.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          previewImg.src = event.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    /**
+     * Handle add product form submission
+     */
+    function handleAddProduct(e) {
+      e.preventDefault();
+
+      if (!currentUser || currentUser.accountType !== 'seller') {
+        alert('Only sellers can add products');
+        return;
+      }
+
+      const productName = document.getElementById('productName')?.value;
+      const productFile = document.getElementById('productImage')?.files[0];
+      
+      if (!productName || !productFile) {
+        alert('Please fill all required fields');
+        return;
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Uploading...';
+      submitBtn.disabled = true;
+
+      // Upload image to Firebase Storage
+      const timestamp = Date.now();
+      const fileName = `${currentUser.uid}/${timestamp}_${productFile.name}`;
+      const storageRef = storage.ref(`product-images/${fileName}`);
+
+      storageRef.put(productFile)
+        .then((snapshot) => {
+          return snapshot.ref.getDownloadURL();
+        })
+        .then((downloadURL) => {
+          // Create product data with image URL
+          const productData = {
+            id: 'PROD_' + Date.now(),
+            name: productName,
+            category: document.getElementById('productCategory')?.value,
+            description: document.getElementById('productDescription')?.value,
+            price: parseFloat(document.getElementById('productPrice')?.value),
+            quantity: parseInt(document.getElementById('productQuantity')?.value),
+            image: downloadURL,
+            sellerEmail: currentUser.email,
+            sellerName: currentUser.businessName || currentUser.firstName,
+            sellerUid: currentUser.uid,
+            createdAt: new Date().toISOString(),
+            views: 0,
+            sales: 0
+          };
+
+          // Save product to Firestore
+          return db.collection('sellerProducts').doc(productData.id).set(productData)
+            .then(() => {
+              // Also save to allProducts collection for easy querying
+              return db.collection('allProducts').doc(productData.id).set(productData);
+            })
+            .then(() => {
+              if (!sellerProducts) sellerProducts = [];
+              sellerProducts.push(productData);
+
+              alert('Product added successfully!');
+              
+              // Reset form
+              addProductForm.reset();
+              imagePreview.style.display = 'none';
+              
+              // Update inventory display
+              displayInventory();
+              updateSellerStats();
+
+              submitBtn.textContent = originalText;
+              submitBtn.disabled = false;
+            });
+        })
+        .catch((error) => {
+          console.error('Upload error:', error);
+          alert('Failed to add product: ' + error.message);
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        });
+    }
+
+    /**
+     * Load seller products from Firestore
+     */
+    function loadSellerProducts() {
+      if (currentUser && currentUser.accountType === 'seller') {
+        db.collection('sellerProducts')
+          .where('sellerUid', '==', currentUser.uid)
+          .onSnapshot((snapshot) => {
+            sellerProducts = [];
+            snapshot.forEach((doc) => {
+              sellerProducts.push(doc.data());
+            });
+            displayInventory();
+            updateSellerStats();
+          });
+      }
+    }
+
+    /**
+     * Display seller inventory
+     */
+    function displayInventory() {
+      const inventoryList = document.getElementById('inventoryList');
+      if (!inventoryList) return;
+
+      if (sellerProducts.length === 0) {
+        inventoryList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #999;">No products yet. Add your first product to get started!</p>';
+        return;
+      }
+
+      inventoryList.innerHTML = sellerProducts.map(product => `
+        <div class="inventory-item">
+          <img src="${product.image}" alt="${product.name}" class="inventory-item-image">
+          <div class="inventory-item-content">
+            <h3>${product.name}</h3>
+            <p class="inventory-item-category">${product.category}</p>
+            <p class="inventory-item-price">Rs. ${product.price.toFixed(2)}</p>
+            <p class="inventory-item-meta">Stock: ${product.quantity} | Views: ${product.views}</p>
+          </div>
+          <div class="inventory-item-actions">
+            <button class="btn btn-sm btn-outline" onclick="editProduct('${product.id}')">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * Delete product
+     */
+    window.deleteProduct = function(productId) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        db.collection('sellerProducts').doc(productId).delete()
+          .then(() => {
+            db.collection('allProducts').doc(productId).delete();
+            sellerProducts = sellerProducts.filter(p => p.id !== productId);
+            displayInventory();
+            updateSellerStats();
+          })
+          .catch((error) => {
+            console.error('Delete error:', error);
+            alert('Failed to delete product');
+          });
+      }
+    };
+
+    /**
+     * Edit product
+     */
+    window.editProduct = function(productId) {
+      alert('Edit feature coming soon. You can delete and re-add the product.');
+    };
+
+    /**
+     * Update seller statistics
+     */
+    function updateSellerStats() {
+      if (!currentUser || currentUser.accountType !== 'seller') return;
+
+      const totalProductsEl = document.getElementById('totalProducts');
+      const totalViewsEl = document.getElementById('totalViews');
+      const totalRevenueEl = document.getElementById('totalRevenue');
+      const analyticsOrderCountEl = document.getElementById('analyticsOrderCount');
+      const avgOrderValueEl = document.getElementById('avgOrderValue');
+
+      const totalViews = sellerProducts.reduce((sum, p) => sum + (p.views || 0), 0);
+      const totalSales = sellerProducts.reduce((sum, p) => sum + (p.sales || 0), 0);
+      const totalRevenue = sellerProducts.reduce((sum, p) => sum + (p.price * (p.sales || 0)), 0);
+
+      if (totalProductsEl) totalProductsEl.textContent = sellerProducts.length;
+      if (totalViewsEl) totalViewsEl.textContent = totalViews;
+      if (totalRevenueEl) totalRevenueEl.textContent = 'Rs. ' + totalRevenue.toFixed(2);
+      if (analyticsOrderCountEl) analyticsOrderCountEl.textContent = totalSales;
+      if (avgOrderValueEl) avgOrderValueEl.textContent = totalSales > 0 ? 'Rs. ' + (totalRevenue / totalSales).toFixed(2) : 'Rs. 0';
+    }
+
+    /**
+     * Handle password reset
+     */
+    function handlePasswordReset(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('resetEmail')?.value;
+      
+      if (!email) {
+        alert('Please enter your email address');
+        return;
+      }
+
+      const resetBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = resetBtn.textContent;
+      resetBtn.textContent = 'Sending...';
+      resetBtn.disabled = true;
+
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          alert(`Password reset email sent to ${email}. Check your inbox and follow the link to reset your password.`);
+          
+          // Go back to login
+          showLoginForm();
+          
+          resetBtn.textContent = originalText;
+          resetBtn.disabled = false;
+        })
+        .catch((error) => {
+          console.error('Password reset error:', error);
+          alert('Error sending reset email: ' + error.message);
+          resetBtn.textContent = originalText;
+          resetBtn.disabled = false;
+        });
+    }
+
+    /**
+     * Show login form
+     */
+    function showLoginForm() {
+      authTabs.forEach(tab => tab.classList.remove('active'));
+      authForms.forEach(form => form.classList.remove('active'));
+      
+      const loginTab = Array.from(authTabs).find(tab => tab.dataset.tab === 'login');
+      const loginForm = document.getElementById('login');
+      
+      if (loginTab) loginTab.classList.add('active');
+      if (loginForm) loginForm.classList.add('active');
+    }
+
+    /**
+     * Show password reset form
+     */
+    function showPasswordResetForm() {
+      authTabs.forEach(tab => tab.classList.remove('active'));
+      authForms.forEach(form => form.classList.remove('active'));
+      
+      const resetForm = document.getElementById('forgot-password');
+      if (resetForm) resetForm.classList.add('active');
+    }
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // User is logged in
+          db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                currentUser = {
+                  uid: user.uid,
+                  email: user.email,
+                  ...doc.data()
+                };
+
+                const userNameEl = document.getElementById('userName');
+                const userEmailEl = document.getElementById('userEmail');
+
+                if (userNameEl) userNameEl.textContent = `Welcome back, ${currentUser.firstName}!`;
+                if (userEmailEl) userEmailEl.textContent = user.email;
+
+                displayDashboard(currentUser.accountType);
+                if (authContainer) authContainer.style.display = 'none';
+                if (accountDashboard) accountDashboard.style.display = 'grid';
+              }
+            })
+            .catch((error) => {
+              console.error('Error loading user profile:', error);
+            });
+        }
+      });
+    }
+
+    /**
+     * Initialize
+     */
+    function init() {
+      // Auth tabs
+      authTabs.forEach(tab => tab.addEventListener('click', handleAuthTabSwitch));
+
+      // Account type selection
+      accountTypeRadios.forEach(radio => radio.addEventListener('change', handleAccountTypeChange));
+
+      // Forms
+      const loginForm = document.querySelector('#login form');
+      const registerForm = document.querySelector('#register form');
+      const resetForm = document.querySelector('#forgot-password form');
+
+      if (loginForm) loginForm.addEventListener('submit', handleLogin);
+      if (registerForm) registerForm.addEventListener('submit', handleRegister);
+      if (resetForm) resetForm.addEventListener('submit', handlePasswordReset);
+
+      // Password reset link
+      const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          showPasswordResetForm();
+        });
+      }
+
+      // Back to login button
+      const backToLoginBtn = document.getElementById('backToLogin');
+      if (backToLoginBtn) {
+        backToLoginBtn.addEventListener('click', showLoginForm);
+      }
+
+      // Dashboard
+      dashboardNavBtns.forEach(btn => btn.addEventListener('click', handleDashboardNav));
+
+      if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
+      // Product form
+      if (addProductForm) addProductForm.addEventListener('submit', handleAddProduct);
+      if (productImage) productImage.addEventListener('change', handleImagePreview);
+
+      // Check authentication state
+      checkAuthState();
+    }
+
+    // Run initialization
+    init();
+  }
+)();
 
   /**
    * Handle auth tab switching (Login/Register)
@@ -446,4 +1112,4 @@
   } else {
     init();
   }
-})();
+();
